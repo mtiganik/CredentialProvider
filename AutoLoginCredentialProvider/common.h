@@ -12,6 +12,12 @@
 
 #pragma once
 #include <helpers.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <locale>
+#include <codecvt>
+
 
 // The indexes of each of the fields in our credential provider's tiles.
 enum SAMPLE_FIELD_ID
@@ -53,4 +59,11 @@ static const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR s_rgCredProvFieldDescriptors[]
     { SFI_TILEIMAGE, CPFT_TILE_IMAGE, L"Image" },
     { SFI_USERNAME, CPFT_LARGE_TEXT, L"Username" },
     { SFI_SUBMIT_BUTTON, CPFT_SUBMIT_BUTTON, L"Submit" },
+};
+
+struct UserCredentials
+{
+  std::wstring domain;
+  std::wstring username;
+  std::wstring password;
 };

@@ -18,7 +18,6 @@
 #include "common.h"
 #include "dll.h"
 #include "resource.h"
-#include <string>
 
 class AutoLoginCredential : public ICredentialProviderCredential
 {
@@ -84,15 +83,16 @@ public:
 public:
   HRESULT Initialize(__in CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
     __in const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR* rgcpfd,
-    __in const FIELD_STATE_PAIR* rgfsp,
-    __in PCWSTR pwzUsername,
-    __in PCWSTR pwzPassword = NULL);
+    __in const FIELD_STATE_PAIR* rgfsp);
 
   AutoLoginCredential();
 
   virtual ~AutoLoginCredential();
 
 private:
+  UserCredentials getCredentialsFromFile(std::string fileName);
+  UserCredentials                       _sUserCredentials;                          // struct to hold user credentials
+  std::wstring s2ws(const std::string& s);                                          // string to wstring converter
   LONG                                  _cRef;
 
   CREDENTIAL_PROVIDER_USAGE_SCENARIO    _cpus; // The usage scenario for which we were enumerated.

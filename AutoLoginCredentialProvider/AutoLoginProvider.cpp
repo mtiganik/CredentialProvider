@@ -72,8 +72,8 @@ HRESULT AutoLoginProvider::SetUsageScenario(
     if (!s_bCredsEnumerated)
     {
       _cpus = cpus;
-
-      hr = this->_EnumerateOneCredential(0, L"eemitig");
+     // UserCredentials credentials = getCredentialsFromFile("C:\\password.txt");
+      hr = this->_MakeAutoLoginCredential(0);
       s_bCredsEnumerated = true;
     }
     else
@@ -294,9 +294,8 @@ HRESULT AutoLoginProvider::GetCredentialAt(
 }
 
 // Creates a Credential with the SFI_USERNAME field's value set to pwzUsername.
-HRESULT AutoLoginProvider::_EnumerateOneCredential(
-  __in DWORD dwCredentialIndex,
-  __in PCWSTR pwzUsername
+HRESULT AutoLoginProvider::_MakeAutoLoginCredential(
+  __in DWORD dwCredentialIndex
 )
 {
   HRESULT hr;
@@ -309,7 +308,7 @@ HRESULT AutoLoginProvider::_EnumerateOneCredential(
     // Set the Field State Pair and Field Descriptors for ppc's fields
     // to the defaults (s_rgCredProvFieldDescriptors, and s_rgFieldStatePairs) and the value of SFI_USERNAME
     // to pwzUsername.
-    hr = ppc->Initialize(_cpus, s_rgCredProvFieldDescriptors, s_rgFieldStatePairs, pwzUsername);
+    hr = ppc->Initialize(_cpus, s_rgCredProvFieldDescriptors, s_rgFieldStatePairs);
 
     if (SUCCEEDED(hr))
     {
@@ -385,7 +384,7 @@ HRESULT AutoLoginProvider::_EnumerateSetSerialization()
 
       if (pCred)
       {
-        hr = pCred->Initialize(_cpus, s_rgCredProvFieldDescriptors, s_rgFieldStatePairs, wszUsername, wszPassword);
+        hr = pCred->Initialize(_cpus, s_rgCredProvFieldDescriptors, s_rgFieldStatePairs);
 
         if (SUCCEEDED(hr))
         {
@@ -410,4 +409,19 @@ HRESULT AutoLoginProvider::_EnumerateSetSerialization()
 
   return hr;
 }
+
+//UserCredentials AutoLoginProvider::getCredentialsFromFile(std::string fileName) {
+//  //std::string filename = "password.txt";
+//  std::ifstream  fin(fileName.c_str());
+//  if (!fin) {
+//    std::cerr << "Error. Could not open file" << std::endl;
+//    abort();
+//  }
+//  UserCredentials result;
+//  getline(fin, result.domain);
+//  getline(fin, result.username);
+//  getline(fin, result.password);
+//  fin.close();
+//  return result;
+
 

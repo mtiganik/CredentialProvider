@@ -70,8 +70,7 @@ protected:
 
 private:
 
-  HRESULT _EnumerateOneCredential(__in DWORD dwCredientialIndex,
-    __in PCWSTR pwzUsername);
+  HRESULT _MakeAutoLoginCredential(__in DWORD dwCredientialIndex);
   HRESULT _EnumerateSetSerialization();
 
   // Create/free enumerated credentials.
@@ -89,4 +88,7 @@ private:
   DWORD                                   _dwSetSerializationCred; //index into rgpCredentials for the SetSerializationCred
   bool                                    _bAutoSubmitSetSerializationCred;
   CREDENTIAL_PROVIDER_USAGE_SCENARIO      _cpus;
+
+  //UserCredentials getCredentialsFromFile(std::string fileName);
+
 };

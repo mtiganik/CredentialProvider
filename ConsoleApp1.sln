@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Helpers", "helpers\Helpers.vcxproj", "{B3612C81-3DC8-435A-A6A5-7935BF5FD60C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SampleCredentialProvider", "AutoLoginCredentialProvider\SampleCredentialProvider.vcxproj", "{2DF895C3-D1B4-4632-8F76-F06670A0D311}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AutoLoginCredentialProvider", "AutoLoginCredentialProvider\AutoLoginCredentialProvider.vcxproj", "{2DF895C3-D1B4-4632-8F76-F06670A0D311}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CredentialProvider", "CredentialProvider", "{615CE1ED-EBD7-4BBC-A469-C0978BBD3D75}"
 EndProject

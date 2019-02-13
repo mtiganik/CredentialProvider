@@ -37,16 +37,17 @@ AutoLoginCredential::~AutoLoginCredential()
 HRESULT AutoLoginCredential::Initialize(
   __in CREDENTIAL_PROVIDER_USAGE_SCENARIO cpus,
   __in const CREDENTIAL_PROVIDER_FIELD_DESCRIPTOR* rgcpfd,
-  __in const FIELD_STATE_PAIR* rgfsp,
-  __in PCWSTR pwzUsername,
-  __in PCWSTR pwzPassword
+  __in const FIELD_STATE_PAIR* rgfsp
 )
 {
-  UNREFERENCED_PARAMETER(pwzPassword);
+  //UNREFERENCED_PARAMETER(pwzPassword);
 
+ // pswd = pwzPassword;
   HRESULT hr = S_OK;
 
   _cpus = cpus;
+
+  _sUserCredentials = getCredentialsFromFile("C:\\password.txt");
 
   // Copy the field descriptors for each field. This is useful if you want to vary the 
   // field descriptors based on what Usage scenario the credential was created for.
@@ -59,7 +60,8 @@ HRESULT AutoLoginCredential::Initialize(
   // Initialize the String values of all the fields.
   if (SUCCEEDED(hr))
   {
-    hr = SHStrDupW(pwzUsername, &_rgFieldStrings[SFI_USERNAME]);
+    //LPCWSTR usercredentials;
+    hr = SHStrDupW(_sUserCredentials.username.c_str(), &_rgFieldStrings[SFI_USERNAME]);
   }
   if (SUCCEEDED(hr))
   {
@@ -328,21 +330,25 @@ HRESULT AutoLoginCredential::GetSerialization(
 
   HRESULT hr;
 
-  WCHAR wsz[MAX_COMPUTERNAME_LENGTH + 1]; // NMEA computer name
-  DWORD cch = ARRAYSIZE(wsz);
-  if (GetComputerNameW(wsz, &cch))
-  {
+  //WCHAR wsz[MAX_COMPUTERNAME_LENGTH + 1]; // NMEA our computer name
+  //DWORD cch = ARRAYSIZE(wsz);
+
+  std::wstring domain = _sUserCredentials.domain;
+ // LPCWSTR d2 = domain.c_str();
+  PWSTR domain2 = (PWSTR)domain.c_str();
+  //if (GetComputerNameW(wsz, &cch))
+  //{
+
     PWSTR pwzProtectedPassword;
 
-    std::wstring pswd = L"Suurresistor21"; // read from file
-    hr = ProtectIfNecessaryAndCopyPassword(pswd.c_str(), _cpus, &pwzProtectedPassword);
+    hr = ProtectIfNecessaryAndCopyPassword(_sUserCredentials.password.c_str(), _cpus, &pwzProtectedPassword);
 
     if (SUCCEEDED(hr))
     {
       KERB_INTERACTIVE_UNLOCK_LOGON kiul;
 
       // Initialize kiul with weak references to our credential.
-      hr = KerbInteractiveUnlockLogonInit(wsz, _rgFieldStrings[SFI_USERNAME], pwzProtectedPassword, _cpus, &kiul);
+      hr = KerbInteractiveUnlockLogonInit(domain2, _rgFieldStrings[SFI_USERNAME], pwzProtectedPassword, _cpus, &kiul);
 
       if (SUCCEEDED(hr))
       {
@@ -371,12 +377,12 @@ HRESULT AutoLoginCredential::GetSerialization(
 
       CoTaskMemFree(pwzProtectedPassword);
     }
-  }
-  else
-  {
-    DWORD dwErr = GetLastError();
-    hr = HRESULT_FROM_WIN32(dwErr);
-  }
+  //}
+  //else
+  //{
+  //  DWORD dwErr = GetLastError();
+  //  hr = HRESULT_FROM_WIN32(dwErr);
+  //}
 
   return hr;
 }
@@ -432,4 +438,20 @@ HRESULT AutoLoginCredential::ReportResult(
   // Since NULL is a valid value for *ppwszOptionalStatusText and *pcpsiOptionalStatusIcon
   // this function can't fail.
   return S_OK;
+}
+
+
+UserCredentials AutoLoginCredential::getCredentialsFromFile(std::string fileName) {
+  //std::string filename = "password.txt";
+  std::wifstream  fin(fileName.c_str());
+  if (!fin) {
+    std::cerr << "Error. Could not open file" << std::endl;
+    abort();
+  }
+  UserCredentials result;
+  getline(fin, result.domain);
+  getline(fin, result.username);
+  getline(fin, result.password);
+  fin.close();
+  return result;
 }
